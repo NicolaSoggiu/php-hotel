@@ -39,17 +39,33 @@ $hotels = [
 ];
 
 $parking = isset($_GET["parking"]);
+$min_rating = $_GET["rating"] ?? "";
 
 $arr_filtered = $hotels;
 
+// PARKING FILTER
 if ($parking) {
-    $arr_filtered = [];
+    $arr_filtered_temp = [];
 
-    foreach ($hotels as $hotel) {
+    foreach ($arr_filtered as $hotel) {
         if ($hotel["parking"]) {
-            $arr_filtered[] = $hotel;
+            $arr_filtered_temp[] = $hotel;
         }
     }
+
+    $arr_filtered = $arr_filtered_temp;
+}
+
+// RATING FILTER
+if ($min_rating) {
+    $arr_filtered_temp = [];
+
+    foreach ($arr_filtered as $hotel) {
+        if ($hotel["vote"] >= $min_rating) {
+            $arr_filtered_temp[] = $hotel;
+        }
+    }
+    $arr_filtered = $arr_filtered_temp;
 }
 
 ?>
@@ -63,11 +79,8 @@ if ($parking) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHP Hotel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"
-        defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
 
@@ -82,18 +95,12 @@ if ($parking) {
                 </label>
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
-            <a href="/php-hotel/?selected_parking=&selected_vote=Select" type="reset"
-                class="btn btn-secondary">Reset</a>
-            <label for="vote">Vote</label>
-            <select class="form-select w-25 align-items-center" aria-label="Default select example"
-                name="selected_vote">
-                <option class="selected" selected>Select </option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-            </select>
+            <a href="/php-hotel/?selected_parking=&selected_vote=Select" type="reset" class="btn btn-secondary">Reset</a>
+            <label for="vote">Vote : </label>
+            <div class="mb-3 d-flex align-items-center justify-content-center">
+                <label for="rating" class="form-label"></label>
+                <input type="number" class="form-control" id="rating" name="rating" value="<?php $min_rating ?>">
+            </div>
         </form>
         <table class="table table-hover table-dark">
             <thead>
@@ -107,15 +114,14 @@ if ($parking) {
             </thead>
             <tbody>
                 <?php foreach ($arr_filtered as $hotel) { ?>
-                <tr style="cursor:pointer">
-                    <th scope="row"><?= $hotel['name'] ?></th>
-                    <td><?= $hotel['description'] ?></td>
-                    <td><i
-                            class="bi <?= $hotel['parking'] ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger' ?>"></i>
-                    </td>
-                    <td><?= $hotel['vote'] ?></td>
-                    <td><?= $hotel['distance_to_center'] ?></td>
-                </tr>
+                    <tr style="cursor:pointer">
+                        <th scope="row"><?= $hotel['name'] ?></th>
+                        <td><?= $hotel['description'] ?></td>
+                        <td><i class="bi <?= $hotel['parking'] ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger' ?>"></i>
+                        </td>
+                        <td><?= $hotel['vote'] ?></td>
+                        <td><?= $hotel['distance_to_center'] ?></td>
+                    </tr>
                 <?php } ?>
             </tbody>
         </table>
