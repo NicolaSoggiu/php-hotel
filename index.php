@@ -1,73 +1,6 @@
 <?php
-$hotels = [
-
-    [
-        'name'                 => 'Hotel Belvedere',
-        'description'          => 'Hotel Belvedere Description',
-        'parking'              => true,
-        'vote'                 => 4,
-        'distance_to_center'   => 10.4
-    ],
-    [
-        'name'                 => 'Hotel Futuro',
-        'description'          => 'Hotel Futuro Description',
-        'parking'              => true,
-        'vote'                 => 2,
-        'distance_to_center'   => 2
-    ],
-    [
-        'name'                 => 'Hotel Rivamare',
-        'description'          => 'Hotel Rivamare Description',
-        'parking'              => false,
-        'vote'                 => 1,
-        'distance_to_center'   => 1
-    ],
-    [
-        'name'                 => 'Hotel Bellavista',
-        'description'          => 'Hotel Bellavista Descrizione',
-        'parking'              => false,
-        'vote'                 => 5,
-        'distance_to_center'   => 5.5
-    ],
-    [
-        'name'                 => 'Hotel Milano',
-        'description'          => 'Hotel Milano Description',
-        'parking'              => true,
-        'vote'                 => 2,
-        'distance_to_center'   => 50
-    ],
-];
-
-$parking = isset($_GET["parking"]);
-$min_rating = $_GET["rating"] ?? "";
-
-$arr_filtered = $hotels;
-
-// PARKING FILTER
-if ($parking) {
-    $arr_filtered_temp = [];
-
-    foreach ($arr_filtered as $hotel) {
-        if ($hotel["parking"]) {
-            $arr_filtered_temp[] = $hotel;
-        }
-    }
-
-    $arr_filtered = $arr_filtered_temp;
-}
-
-// RATING FILTER
-if ($min_rating) {
-    $arr_filtered_temp = [];
-
-    foreach ($arr_filtered as $hotel) {
-        if ($hotel["vote"] >= $min_rating) {
-            $arr_filtered_temp[] = $hotel;
-        }
-    }
-    $arr_filtered = $arr_filtered_temp;
-}
-
+include "./data.php";
+include "./function.php";
 ?>
 
 
@@ -104,25 +37,19 @@ if ($min_rating) {
         </form>
         <table class="table table-hover table-dark">
             <thead>
-                <tr>
+                <t>
                     <th scope="col">Name</th>
                     <th scope="col">Description</th>
                     <th scope="col">Parking space</th>
                     <th scope="col">Vote</th>
                     <th scope="col">Distance from the center</th>
-                </tr>
+                </t>
             </thead>
             <tbody>
-                <?php foreach ($arr_filtered as $hotel) { ?>
-                    <tr style="cursor:pointer">
-                        <th scope="row"><?= $hotel['name'] ?></th>
-                        <td><?= $hotel['description'] ?></td>
-                        <td><i class="bi <?= $hotel['parking'] ? 'bi-check-circle-fill text-success' : 'bi-x-circle-fill text-danger' ?>"></i>
-                        </td>
-                        <td><?= $hotel['vote'] ?></td>
-                        <td><?= $hotel['distance_to_center'] ?></td>
-                    </tr>
-                <?php } ?>
+                <?php foreach ($arr_filtered as $hotel) {
+                    print_row($hotel);
+                }
+                ?>
             </tbody>
         </table>
     </div>
